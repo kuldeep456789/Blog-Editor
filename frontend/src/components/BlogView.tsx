@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PenLine, ArrowLeft } from 'lucide-react';
+import { PenLine, ArrowLeft, Trash2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { Blog } from '@/types/blog';
 import { Separator } from '@/components/ui/separator';
@@ -90,16 +89,35 @@ const BlogView: React.FC = () => {
             )}
           </div>
           
-          <div className="flex items-center justify-between text-gray-500 text-sm">
+          <div className="flex items-center justify-between text-gray-500 text-sm gap-2">
             <time dateTime={blog.created_at}>
               {formatDate(blog.created_at)}
             </time>
-            <Button asChild variant="outline" size="sm">
-              <Link to={`/editor/${blog.id}`}>
-                <PenLine className="h-4 w-4 mr-1" />
-                Edit
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to={`/editor/${blog.id}`}>
+                  <PenLine className="h-4 w-4 mr-1" />
+                  Edit
+                </Link>
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={async () => {
+                  if (window.confirm('Are you sure you want to delete this blog post?')) {
+                    try {
+                      await api.deleteBlog(blog.id);
+                      navigate('/');
+                    } catch (error) {
+                      alert('Failed to delete blog post.');
+                    }
+                  }
+                }}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete
+              </Button>
+            </div>
           </div>
         </header>
         

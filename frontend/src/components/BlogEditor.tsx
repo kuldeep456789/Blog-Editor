@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -260,7 +259,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ existingBlogId }) => {
   }
   
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-[#0a192f] dark:via-[#1e3a8a] dark:to-[#2563eb] rounded-2xl shadow-xl">
       <Card>
         <CardContent className="p-6">
           <div className="space-y-6">
@@ -371,6 +370,32 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ existingBlogId }) => {
                   <Send className="mr-2 h-4 w-4" />
                   Publish
                 </Button>
+                <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    if (!(blog as any).id) return;
+                    if (window.confirm('Are you sure you want to delete this blog post?')) {
+                      try {
+                        await api.deleteBlog((blog as any).id);
+                        toast({
+                          title: 'Blog deleted',
+                          description: 'Your blog post has been deleted.',
+                        });
+                        navigate('/');
+                      } catch (error) {
+                        toast({
+                          title: 'Failed to delete',
+                          description: 'An error occurred while deleting your blog post.',
+                          variant: 'destructive',
+                        });
+                      }
+                    }
+                  }}
+                  disabled={!(blog as any).id || loadingPublish || isSaving}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
               </div>
             </div>
           </div>
@@ -379,5 +404,4 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ existingBlogId }) => {
     </div>
   );
 };
-
 export default BlogEditor;
